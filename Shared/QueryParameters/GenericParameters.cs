@@ -10,7 +10,7 @@ namespace HealthCenterAPI.Shared.QueryParameters
         /// Especifica el origen de los datos para el procesamiento.
         /// Puede ser un archivo Excel o una base de datos.
         /// </summary>
-        public DataSourceType SourceType { get; set; }
+        public DataSourceType SourceType { get; set; } = DataSourceType.File;
         public string? Province { get; set; } = null;
         public string? Municipality { get; set; } = null;
         public string? Sector { get; set; } = null;
@@ -31,6 +31,6 @@ namespace HealthCenterAPI.Shared.QueryParameters
     public enum DataSourceType
     {
         Database,
-        Excel
+        File
     }
 }
