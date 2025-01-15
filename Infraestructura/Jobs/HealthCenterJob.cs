@@ -12,6 +12,7 @@ namespace HealthCenterAPI.Infraestructura.Jobs
             _webScrapingRIESS = webScrapingRIESS;
         }
 
+
         public void RegisterRecurringJobs()
         {
             throw new NotImplementedException();

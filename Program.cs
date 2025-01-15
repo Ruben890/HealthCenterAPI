@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Hangfire.PostgreSql;
+using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Extencion;
 using HealthCenterAPI.Infraestructura.Jobs;
 using HealthCenterAPI.Repository;
@@ -12,16 +13,14 @@ using Newtonsoft.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 
+
+
+builder.Services.ConfigureDbPostgreSQL(builder.Configuration);
+builder.Services.ConfigureIISIntegration();
+builder.Services.ConfigureHangFire(builder.Configuration);
 builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddTransient<WebScrapingRIESS>();
-
-// Configuración de PostgreSQL para la base de datos
-builder.Services.AddDbContext<HealthCenterContex>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DbConection"),
-        npgsqlOptions => npgsqlOptions.UseNetTopologySuite()
-    )
-);
+builder.Services.ConfigurationCords();
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -31,17 +30,6 @@ builder.Services.AddControllers()
         options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
     });
 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-        .WithMethods("GET")
-        .WithHeaders();
-    });
-
-});
 
 var app = builder.Build();
 
