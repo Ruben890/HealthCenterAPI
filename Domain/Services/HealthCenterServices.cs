@@ -1,14 +1,9 @@
 ﻿using HealthCenterAPI.Contracts.Iservices;
-using HealthCenterAPI.Shared.Utils;
+using HealthCenterAPI.Domain.Entity;
 
 namespace HealthCenterAPI.Domain.Services
 {
     public class HealthCenterServices : IHealthCenterServices
     {
-
-
-
-       
-
     }
 }
