@@ -1,4 +1,8 @@
-﻿using HealthCenterAPI.Repository;
+﻿using Hangfire;
+using Hangfire.PostgreSql;
+using HealthCenterAPI.Extencion;
+using HealthCenterAPI.Infraestructura.Jobs;
+using HealthCenterAPI.Repository;
 using HealthCenterAPI.Shared.Utils;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -8,13 +12,16 @@ using Newtonsoft.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 
-
+builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddTransient<WebScrapingRIESS>();
 
-builder.Services.AddNpgsql<HealthCenterContex>(
-    builder.Configuration.GetConnectionString("DbConection"),
-    options => options.UseNetTopologySuite());
-
+// Configuración de PostgreSQL para la base de datos
+builder.Services.AddDbContext<HealthCenterContex>(options =>
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DbConection"),
+        npgsqlOptions => npgsqlOptions.UseNetTopologySuite()
+    )
+);
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -60,6 +67,12 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
 });
+
+// Activar el dashboard de Hangfire solo en entorno de desarrollo
+if (app.Environment.IsDevelopment())
+{
+    app.UseHangfireDashboard();
+}
 
 app.UseCors("AllowAll");
 app.UseRouting();
