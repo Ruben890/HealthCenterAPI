@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HealthCenterAPI.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace HealthCenterAPI.Repository
@@ -8,8 +9,11 @@ namespace HealthCenterAPI.Repository
         public HealthCenterContex(DbContextOptions<HealthCenterContex> options):base(options) { }
 
 
+        public virtual DbSet<HealthCenter> HealthCenters { get; set; } = null!;
 
+        public virtual DbSet<Location> Locations { get; set; } = null!;
 
+        public virtual DbSet<Services> Services { get; set; } = null!;  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

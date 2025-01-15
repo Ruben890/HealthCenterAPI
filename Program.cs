@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
 
 
 var builder = WebApplication.CreateBuilder(args);

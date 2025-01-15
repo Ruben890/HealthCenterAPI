@@ -8,6 +8,8 @@ namespace HealthCenterAPI.Domain.Entity
         public int Id { get; set; }
         [Required]
         public int Version { get; set; }
+        [Required]
+        public int PreviousVersion { get; set; }
         public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
     }
 }
