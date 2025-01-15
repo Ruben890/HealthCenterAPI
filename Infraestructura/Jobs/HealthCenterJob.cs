@@ -1,4 +1,5 @@
-﻿using HealthCenterAPI.Contracts;
+﻿using Hangfire;
+using HealthCenterAPI.Contracts;
 using HealthCenterAPI.Shared.Utils;
 
 namespace HealthCenterAPI.Infraestructura.Jobs
@@ -12,10 +13,23 @@ namespace HealthCenterAPI.Infraestructura.Jobs
             _webScrapingRIESS = webScrapingRIESS;
         }
 
+        public async Task DownloadExcelFileIfNotExists()
+        {
+            DateTime? date = DateTime.Now;
+
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
+            if (!Directory.Exists(directoryPath) || Directory.GetFiles(directoryPath).Length <= 0) date = null;
+            await _webScrapingRIESS.DownloadExcelFile(date);
+        }
+
+
 
         public void RegisterRecurringJobs()
         {
-            throw new NotImplementedException();
+            RecurringJob.AddOrUpdate(
+                         "download-excel-file",
+                         () => DownloadExcelFileIfNotExists(),
+                          Cron.Daily(1, 3));
         }
     }
 }

@@ -21,7 +21,7 @@ namespace HealthCenterAPI.Shared.Utils
             _page = browser.NavigateToPage(new Uri(GetConfigurationValue("WebUrl")));
         }
 
-        public async Task DowloandExelFile(DateTime? date = null)
+        public async Task DownloadExcelFile(DateTime? date = null)
         {
             try
             {
@@ -75,11 +75,19 @@ namespace HealthCenterAPI.Shared.Utils
                     // Definir la ruta completa para el archivo
                     var filePath = Path.Combine(directoryPath, outputFilename);
 
-                    // Guardar el archivo en disco
+                    // Descargar y guardar el nuevo archivo en disco
                     var fileBytes = await fileResponse.Content.ReadAsByteArrayAsync();
                     await File.WriteAllBytesAsync(filePath, fileBytes);
 
                     Console.WriteLine($"Archivo descargado y guardado como: {filePath}");
+
+                    // Eliminar el archivo anterior si existe
+                    var existingFiles = Directory.GetFiles(directoryPath).Where(f => f != filePath);
+                    foreach (var existingFile in existingFiles)
+                    {
+                        File.Delete(existingFile);
+                        Console.WriteLine($"Archivo anterior eliminado: {existingFile}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -89,6 +97,7 @@ namespace HealthCenterAPI.Shared.Utils
                 throw;
             }
         }
+
 
         // Método privado para obtener valores de configuración con validación
         private string GetConfigurationValue(string key)
