@@ -1,10 +1,15 @@
 ﻿using HealthCenterAPI.Repository;
+using HealthCenterAPI.Shared.Utils;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Services.AddTransient<WebScrapingRIESS>();
 
 builder.Services.AddNpgsql<HealthCenterContex>(
     builder.Configuration.GetConnectionString("DbConection"),
