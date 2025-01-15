@@ -23,12 +23,12 @@ namespace HealthCenterAPI.Domain.Entity
         public bool? isSonography { get; set; } = null!;
         [AllowNull]
         public bool? isPhysiotherapy { get; set; } = null!;
-        [AllowNull]
-        public bool? isComputer { get; set; } = null!;
+
         [AllowNull]
         public bool? isInternet { get; set; } = null!;
+
         [AllowNull]
-        public bool? isRayoxX { get; set; } = null!;
+        public bool? Xray { get; set; } = null!;
 
         public  virtual HealthCenter? HealthCenter { get; set; } = null!;
 
