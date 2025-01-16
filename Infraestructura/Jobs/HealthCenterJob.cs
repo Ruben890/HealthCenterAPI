@@ -122,8 +122,6 @@ namespace HealthCenterAPI.Infraestructura.Jobs
             await Task.WhenAll(tasks);
         }
 
-
-
         public void RegisterRecurringJobs()
         {
             RecurringJob.AddOrUpdate(
