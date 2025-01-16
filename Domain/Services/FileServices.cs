@@ -17,25 +17,25 @@ namespace HealthCenterAPI.Domain.Services
 
 
 
-        //public async Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters)
-        //{
-        //    try
-        //    {
-        //        await EnsureExcelFileExistsAsync();
+        public async Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters)
+        {
+            try
+            {
+                await EnsureExcelFileExistsAsync();
 
-        //    }
-        //    catch (Exception)
-        //    {
+            }
+            catch (Exception)
+            {
 
-        //        throw;
-        //    }
-        //}
+                throw;
+            }
+        }
 
         private async Task EnsureExcelFileExistsAsync()
         {
             DateTime? date = DateTime.Now;
 
-            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
             if (!Directory.Exists(directoryPath) || Directory.GetFiles(directoryPath).Length <= 0) date = null;
             await _webScrapingRIESS.DownloadExcelFile(date);
         }

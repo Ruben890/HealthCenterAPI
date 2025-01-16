@@ -17,7 +17,7 @@ namespace HealthCenterAPI.Infraestructura.Jobs
         {
             DateTime? date = DateTime.Now;
 
-            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
             if (!Directory.Exists(directoryPath) || Directory.GetFiles(directoryPath).Length <= 0) date = null;
             await _webScrapingRIESS.DownloadExcelFile(date);
         }

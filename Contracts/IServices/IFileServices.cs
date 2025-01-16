@@ -5,6 +5,6 @@ namespace HealthCenterAPI.Contracts.IServices
 {
     public interface IFileServices
     {
-        //Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters);
+        Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters);
     }
 }
