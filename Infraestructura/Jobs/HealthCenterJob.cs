@@ -131,11 +131,14 @@ namespace HealthCenterAPI.Infraestructura.Jobs
                          () => DownloadExcelFileIfNotExists(),
                           Cron.Daily(1, 3));
 
+            if (_config.GetValue<bool>("DataSourceType:Database", false))
+            {
+                RecurringJob.AddOrUpdate(
+                     "MapExcelDataToDatabaseAsync",
+                     () => MapExcelDataToDatabaseAsync(),
+                     Cron.Weekly(DayOfWeek.Tuesday));
 
-            //RecurringJob.AddOrUpdate(
-            //     "MapExcelDataToDatabaseAsync",
-            //     () => MapExcelDataToDatabaseAsync(),
-            //     Cron.Weekly(DayOfWeek.Tuesday));
+            }
         }
     }
 }
