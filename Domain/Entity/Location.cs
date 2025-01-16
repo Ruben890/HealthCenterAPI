@@ -40,7 +40,6 @@ namespace HealthCenterAPI.Domain.Entity
         public Point? Ubication { get; set; } = null!;
 
         [AllowNull]
-        public string? Direction { get; set; } = null!;
 
         public virtual HealthCenter? HealthCenter { get; set; } = null!;
     }

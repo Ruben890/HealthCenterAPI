@@ -18,6 +18,87 @@ namespace HealthCenterAPI.Infraestructura.Repository
             _context = contex;
         }
 
+        public async Task<HealthCenter> GetbyNameHealthCenter(string name) =>
+            await _context.HealthCenters.Where(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+
+        public async Task<PagedList<HealthCenterDto>> GetAllHealthCenter(GenericParameters parameters)
+        {
+            ;
+            var query = _context.HealthCenters
+                            .AsNoTracking()
+                            .AsQueryable()
+                            .AsSplitQuery();
+
+            FilterHealthCenters(query, parameters);
+
+            var result = query.Select(x => new HealthCenterDto
+            {
+                NombreCentro = x.Name,
+                Administrada_Por = x.Managed_By,
+                Anio_Apertura = x.OpeningYear,
+                Anio_Ultima_Ampl_Remod = x.lastRenovationYear,
+                Complejidad_Servicio = x.ServiceComplexity,
+                Email = x.Email,
+                TelCentro = x.Tel,
+                FaxCentro = x.Fax,
+                RNC = x.RNC,
+                SRS = x.SRS,
+                Nivel_atencion = x.Level,
+                Tipo_Centro_Primer_Nivel = x.Level,
+                Location = new LocationDto
+                {
+                    DireccionCentro = x.Location!.Address,
+                    Provincia = x.Location.Province,
+                    Distrito_Municipal = x.Location.MunicipalDistrict,
+                    Municipio = x.Location.Municipality,
+                    Barrio = x.Location.Neighborhood,
+                    Gerencia_Area = x.Location.Area,
+                    Sector = x.Location.Sector,
+                    Zona = x.Location.Zone,
+                    LonCentro = x.Location.Ubication!.X,
+                    LatCentro = x.Location.Ubication.Y,
+                },
+                Services = new ServicesDto
+                {
+                    PNA_Consultorios = x.Services.isOffices,
+                    PNA_Emergencia = x.Services.isEmergency,
+                    PNA_Fisioterapia = x.Services.isPhysiotherapy,
+                    PNA_Laboratorio = x.Services.isLaboratory,
+                    PNA_Modulos_Odontologia = x.Services.isLaboratory,
+                    PNA_Rayox_X = x.Services.Xray,
+                    PNA_Sonografia = x.Services.isSonography,
+                    PNA_Internet = x.Services.isInternet
+                }
+
+            });
+
+            return await PagedList<HealthCenterDto>.ToPagedListAsync(result, parameters.PageNumber, parameters.PageSize);
+
+        }
+
+        public TEntity Insert<TEntity>(TEntity entity) where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            _context.Set<TEntity>().Add(entity);
+            _context.SaveChanges();
+
+            return entity;
+        }
+
+        public void InsertRange<TEntity>(IEnumerable<TEntity> entity) where TEntity : class
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            _context.Set<TEntity>().AddRange(entity);
+            _context.SaveChanges();
+        }
 
         private IQueryable<HealthCenter> FilterHealthCenters(IQueryable<HealthCenter> healthCenters, GenericParameters parameters)
         {
@@ -102,61 +183,6 @@ namespace HealthCenterAPI.Infraestructura.Repository
 
             // Devolver los resultados filtrados
             return query;
-        }
-
-        public async Task<PagedList<HealthCenterDto>> GetAllHealthCenter(GenericParameters parameters)
-        {
-            ;
-            var query = _context.HealthCenters
-                            .AsNoTracking()
-                            .AsQueryable()
-                            .AsSplitQuery();
-
-            FilterHealthCenters(query, parameters);
-
-            var result = query.Select(x => new HealthCenterDto
-            {
-                NombreCentro = x.Name,
-                Administrada_Por = x.Managed_By,
-                Anio_Apertura = x.OpeningYear,
-                Anio_Ultima_Ampl_Remod = x.lastRenovationYear,
-                Complejidad_Servicio = x.ServiceComplexity,
-                Email = x.Email,
-                TelCentro = x.Tel,
-                FaxCentro = x.Fax,
-                RNC = x.RNC,
-                SRS = x.SRS,
-                Nivel_atencion = x.Level,
-                Tipo_Centro_Primer_Nivel = x.Level,
-                Location = new LocationDto
-                {
-                    DireccionCentro = x.Location!.Direction,
-                    Provincia = x.Location.Province,
-                    Distrito_Municipal = x.Location.MunicipalDistrict,
-                    Municipio = x.Location.Municipality,
-                    Barrio = x.Location.Neighborhood,
-                    Gerencia_Area = x.Location.Area,
-                    Sector = x.Location.Sector,
-                    Zona = x.Location.Zone,
-                    LonCentro = x.Location.Ubication!.X,
-                    LatCentro = x.Location.Ubication.Y,
-                },
-                Services = new ServicesDto
-                {
-                    PNA_Consultorios = x.Services.isOffices,
-                    PNA_Emergencia = x.Services.isEmergency,
-                    PNA_Fisioterapia = x.Services.isPhysiotherapy,
-                    PNA_Laboratorio = x.Services.isLaboratory,
-                    PNA_Modulos_Odontologia = x.Services.isLaboratory,
-                    PNA_Rayox_X = x.Services.Xray,
-                    PNA_Sonografia = x.Services.isSonography,
-                    PNA_Internet = x.Services.isInternet
-                }
-
-            });
-
-            return await PagedList<HealthCenterDto>.ToPagedListAsync(result, parameters.PageNumber, parameters.PageSize);
-
         }
     }
 }
