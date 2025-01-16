@@ -5,6 +5,8 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ScrapySharp.Extensions;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace HealthCenterAPI.Shared.Utils
 {
@@ -25,81 +27,96 @@ namespace HealthCenterAPI.Shared.Utils
         {
             try
             {
-                // Obtener el enlace de descarga del archivo Excel
-                var fileLink = _page.Html.CssSelect("div.file a.wpfd_downloadlink").FirstOrDefault()?.Attributes["href"]?.Value;
+                var fileLink = _page.Html.CssSelect("div.file a.wpfd_downloadlink")
+                                 .FirstOrDefault()?.Attributes["href"]?.Value;
+
                 if (string.IsNullOrWhiteSpace(fileLink))
                 {
                     throw new InvalidOperationException("No se pudo encontrar el enlace de descarga del archivo Excel.");
                 }
 
-                // Obtener el nombre del archivo y la fecha del archivo
                 var fileName = _page.Html.CssSelect("div.file h3").FirstOrDefault()?.InnerText.Trim();
-                var fileDateStr = _page.Html.CssSelect("div.file div.file-dated span").FirstOrDefault()?.InnerText;
+                var fileDateStr = _page.Html.CssSelect("div.file div.file-dated").FirstOrDefault()?.InnerText;
+
                 if (string.IsNullOrWhiteSpace(fileName) || string.IsNullOrWhiteSpace(fileDateStr))
                 {
                     throw new InvalidOperationException("No se pudo encontrar el nombre del archivo o la fecha en la página.");
                 }
 
-                // Extraer la fecha del archivo en formato "dd-MM-yyyy"
                 var fileDate = DateTime.ParseExact(fileDateStr.Split(':')[1].Trim(), "dd-MM-yyyy", null).ToString("yyyy-MM-dd");
 
-                // Verificar si la fecha del archivo es mayor que la fecha del documento
-                if (date.HasValue && DateTime.Parse(fileDate) < date.Value)
+                fileName = ProcessFileName(fileName);
+
+                if (date.HasValue && (DateTime.Parse(fileDate) < date.Value))
                 {
                     Console.WriteLine("La fecha del archivo es menor a la fecha del documento. No se descargará.");
                     return;
                 }
 
-                // Obtener la fecha de la descarga
                 var downloadDate = DateTime.Now.ToString("yyyy-MM-dd");
+                var outputFilename = $"{fileName}_{fileDate}_{downloadDate}{Path.GetExtension(fileLink)}";
+                var filePath = await DownloadAndSaveFile(fileLink, outputFilename);
 
-                // Descargar el archivo Excel
-                using (var client = new HttpClient())
-                {
-                    var fileResponse = await client.GetAsync(fileLink);
-                    fileResponse.EnsureSuccessStatusCode();
-
-                    // Obtener la extensión del archivo
-                    var fileExtension = Path.GetExtension(fileLink);
-
-                    // Crear el nombre del archivo que se guardará
-                    var outputFilename = $"{fileName}_{fileDate}_{downloadDate}{fileExtension}";
-
-                    // Crear el directorio "files" si no existe
-                    var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
-                    if (!Directory.Exists(directoryPath))
-                    {
-                        Directory.CreateDirectory(directoryPath);
-                    }
-
-                    // Definir la ruta completa para el archivo
-                    var filePath = Path.Combine(directoryPath, outputFilename);
-
-                    // Descargar y guardar el nuevo archivo en disco
-                    var fileBytes = await fileResponse.Content.ReadAsByteArrayAsync();
-                    await File.WriteAllBytesAsync(filePath, fileBytes);
-
-                    Console.WriteLine($"Archivo descargado y guardado como: {filePath}");
-
-                    // Eliminar el archivo anterior si existe
-                    var existingFiles = Directory.GetFiles(directoryPath).Where(f => f != filePath);
-                    foreach (var existingFile in existingFiles)
-                    {
-                        File.Delete(existingFile);
-                        Console.WriteLine($"Archivo anterior eliminado: {existingFile}");
-                    }
-                }
+                CleanOldFiles(filePath);
             }
             catch (Exception ex)
             {
-                // Manejo de errores
                 Console.Error.WriteLine($"Error al descargar el archivo: {ex.Message}");
                 throw;
             }
         }
 
+        private string ProcessFileName(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName)) return string.Empty;
 
-        // Método privado para obtener valores de configuración con validación
+            fileName = Regex.Replace(fileName, @"\d", string.Empty) // Eliminar números
+                           .Replace("--", string.Empty)           // Eliminar guiones dobles
+                           .Trim();                               // Eliminar espacios adicionales
+
+            return string.Concat(Regex.Split(fileName, @"\s+")
+                                       .Select((word, index) =>
+                                           index == 0
+                                               ? word.ToLowerInvariant()
+                                               : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(word.ToLowerInvariant()))); // CamelCase
+        }
+
+        private async Task<string> DownloadAndSaveFile(string fileLink, string outputFilename)
+        {
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var filePath = Path.Combine(directoryPath, outputFilename);
+
+            using (var client = new HttpClient())
+            {
+                var fileResponse = await client.GetAsync(fileLink);
+                fileResponse.EnsureSuccessStatusCode();
+
+                var fileBytes = await fileResponse.Content.ReadAsByteArrayAsync();
+                await File.WriteAllBytesAsync(filePath, fileBytes);
+            }
+
+            Console.WriteLine($"Archivo descargado y guardado como: {filePath}");
+            return filePath;
+        }
+
+        private void CleanOldFiles(string newFilePath)
+        {
+            var directoryPath = Path.GetDirectoryName(newFilePath);
+            var existingFiles = Directory.GetFiles(directoryPath!).Where(f => f != newFilePath);
+
+            foreach (var existingFile in existingFiles)
+            {
+                File.Delete(existingFile);
+                Console.WriteLine($"Archivo anterior eliminado: {existingFile}");
+            }
+        }
+
         private string GetConfigurationValue(string key)
         {
             var value = _configuration[key];

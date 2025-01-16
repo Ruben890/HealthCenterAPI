@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using HealthCenterAPI.Shared.Utils;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HealthCenterAPI.Controllers
@@ -7,6 +8,7 @@ namespace HealthCenterAPI.Controllers
     [ApiController]
     public class HealthCenterController : ControllerBase
     {
+        
 
     }
 }

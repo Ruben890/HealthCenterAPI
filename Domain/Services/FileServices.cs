@@ -17,19 +17,19 @@ namespace HealthCenterAPI.Domain.Services
 
 
 
-        public async Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters)
-        {
-            try
-            {
-                await EnsureExcelFileExistsAsync();
+        //public async Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters)
+        //{
+        //    try
+        //    {
+        //        await EnsureExcelFileExistsAsync();
 
-            }
-            catch (Exception)
-            {
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
         private async Task EnsureExcelFileExistsAsync()
         {
