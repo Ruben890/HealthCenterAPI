@@ -32,7 +32,15 @@ namespace HealthCenterAPI.Controllers
             var response = new BaseResponse();
             try
             {
-                return Ok(await _fileService.GetHealthCenter(parameters));
+                if(_configuration.GetValue<bool>("DataSourceType:Database", false) && parameters.SourceType == DataSourceType.Database)
+                {
+                    return Ok(await _healthCenterServices.GetHealthCenter(parameters));
+                }
+                else
+                {
+                    return Ok(await _fileService.GetHealthCenter(parameters));
+                }
+               
             }
             catch (Exception ex)
             {
