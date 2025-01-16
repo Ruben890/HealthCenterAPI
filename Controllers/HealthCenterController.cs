@@ -1,4 +1,5 @@
-﻿using HealthCenterAPI.Contracts.IServices;
+﻿using HealthCenterAPI.Contracts.Iservices;
+using HealthCenterAPI.Contracts.IServices;
 using HealthCenterAPI.Shared;
 using HealthCenterAPI.Shared.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,18 @@ namespace HealthCenterAPI.Controllers
     public class HealthCenterController : ControllerBase
     {
         private readonly IFileServices _fileService;
+        private readonly IHealthCenterServices _healthCenterServices;
         private readonly IConfiguration _configuration;
-        public HealthCenterController(IFileServices services, IConfiguration configuration)
+        public HealthCenterController
+            (
+            IFileServices services,
+            IConfiguration configuration,
+            IHealthCenterServices healthCenterServices
+            )
         {
             _fileService = services;
             _configuration = configuration;
+            _healthCenterServices = healthCenterServices;
         }
 
 
