@@ -1,34 +1,41 @@
-﻿using HealthCenterAPI.Contracts.Iservices;
+﻿using HealthCenterAPI.Contracts.IRepository;
+using HealthCenterAPI.Contracts.Iservices;
 using HealthCenterAPI.Contracts.IServices;
+using HealthCenterAPI.Domain.Entity;
+using HealthCenterAPI.Shared;
 using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
+using HealthCenterAPI.Shared.RequestFeatures;
 using HealthCenterAPI.Shared.Utils;
+using Newtonsoft.Json;
 
 namespace HealthCenterAPI.Domain.Services
 {
     public class FileServices : IFileServices
     {
         private readonly WebScrapingRIESS _webScrapingRIESS;
-
-        public FileServices(WebScrapingRIESS webScrapingRIESS)
+        private IFileRepository _fileRepository;
+        public FileServices(WebScrapingRIESS webScrapingRIESS, IFileRepository fileRepository)
         {
             _webScrapingRIESS = webScrapingRIESS;
+            _fileRepository = fileRepository;
         }
 
 
 
-        public async Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters)
+        public async Task<BaseResponse> GetHealthCenter(GenericParameters parameters)
         {
-            try
-            {
-                await EnsureExcelFileExistsAsync();
+            var response = new BaseResponse();
 
-            }
-            catch (Exception)
-            {
+            await EnsureExcelFileExistsAsync();
+            var list = await _fileRepository.MapExcelToPagedDto(parameters);
 
-                throw;
-            }
+            var healthCenter = PagedList<HealthCenterDto>.ToPagedList((_fileRepository.FilterHealthCenters(list, parameters)), parameters.PageNumber, parameters.PageSize); ;
+            response.SetPagination(healthCenter.Pagination);
+            response.Details = healthCenter;
+
+            return response;
+
         }
 
         private async Task EnsureExcelFileExistsAsync()

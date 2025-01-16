@@ -1,12 +1,11 @@
 ﻿using Hangfire;
-using Hangfire.PostgreSql;
-using HealthCenterAPI.Domain.Entity;
+using HealthCenterAPI.Contracts.IRepository;
+using HealthCenterAPI.Contracts.IServices;
+using HealthCenterAPI.Domain.Services;
 using HealthCenterAPI.Extencion;
-using HealthCenterAPI.Infraestructura.Jobs;
-using HealthCenterAPI.Repository;
+using HealthCenterAPI.Infraestructura.Repository;
 using HealthCenterAPI.Shared.Utils;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 
 
@@ -20,6 +19,8 @@ builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureHangFire(builder.Configuration);
 builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddTransient<WebScrapingRIESS>();
+builder.Services.AddTransient<IFileRepository, FileRepository>();
+builder.Services.AddTransient<IFileServices, FileServices>();
 builder.Services.ConfigurationCords();
 
 builder.Services.AddControllers()

@@ -1,4 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HealthCenterAPI.Shared.RequestFeatures
 {
@@ -18,6 +22,22 @@ namespace HealthCenterAPI.Shared.RequestFeatures
                 NextPage = pageNumber < (int)Math.Ceiling(count / (double)pageSize) ? pageNumber + 1 : null
             };
             AddRange(items);
+        }
+
+        /// <summary>
+        /// Realiza la paginación en memoria, sobre una lista ya cargada de elementos.
+        /// </summary>
+        /// <param name="source">Lista completa de elementos</param>
+        /// <param name="pageNumber">Número de página actual</param>
+        /// <param name="pageSize">Cantidad de elementos por página</param>
+        /// <returns>Una lista paginada</returns>
+        public static PagedList<T> ToPagedList(List<T> source, int pageNumber, int pageSize)
+        {
+            var count = source.Count(); // Obtener el total de elementos
+            var items = source.Skip((pageNumber - 1) * pageSize)  // Saltar páginas previas
+                              .Take(pageSize)                      // Tomar los elementos de la página actual
+                              .ToList();
+            return new PagedList<T>(items, count, pageNumber, pageSize);
         }
 
         /// <summary>

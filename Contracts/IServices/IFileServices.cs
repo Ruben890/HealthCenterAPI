@@ -1,10 +1,11 @@
-﻿using HealthCenterAPI.Shared.Dto;
+﻿using HealthCenterAPI.Shared;
+using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
 
 namespace HealthCenterAPI.Contracts.IServices
 {
     public interface IFileServices
     {
-        Task<IEnumerable<HealthCenterDto>> GetHealthCenter(GenericParameters parameters);
+        Task<BaseResponse> GetHealthCenter(GenericParameters parameters);
     }
 }

@@ -8,7 +8,7 @@ namespace HealthCenterAPI.Shared
 
         public object? Details { get; set; } = null!;
 
-        public Pagination? Pagination { get; set; } = null!;
+        public Pagination? Pagination { get; set; } = new Pagination();
 
         public void SetPagination(Pagination pagination)
         {
