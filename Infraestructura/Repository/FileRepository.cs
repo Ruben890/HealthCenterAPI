@@ -94,7 +94,7 @@ namespace HealthCenterAPI.Infraestructura.Repository
             return query.ToList();
         }
 
-        public async Task<List<HealthCenterDto>> MapExcelToPagedDto(GenericParameters parameters)
+        public async Task<List<HealthCenterDto>> MapExcelToPagedDto(GenericParameters? parameters = null)
         {
             var healthCenters = new List<HealthCenterDto>();
             var file = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Files")).FirstOrDefault();
@@ -173,8 +173,6 @@ namespace HealthCenterAPI.Infraestructura.Repository
 
             return healthCenters;
         }
-
-
 
     }
 }

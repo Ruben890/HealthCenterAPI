@@ -18,8 +18,27 @@ namespace HealthCenterAPI.Infraestructura.Repository
             _context = contex;
         }
 
-        public async Task<HealthCenter> GetbyNameHealthCenter(string name) =>
-            await _context.HealthCenters.Where(x => x.Name.Equals(name, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+        public async Task<List<string>> GetExistingNamesAsync(List<string> names)
+        {
+
+            try
+            {
+                // Consultar los nombres existentes en la base de datos
+                var existingNames = await _context.HealthCenters
+                    .Where(x => names.Contains(x.Name!))
+                    .Select(x => x.Name)
+                    .ToListAsync();
+
+                return existingNames!;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while fetching existing names: {ex.Message}");
+                throw;
+            }
+        }
+
+
 
         public async Task<PagedList<HealthCenterDto>> GetAllHealthCenter(GenericParameters parameters)
         {
@@ -76,29 +95,36 @@ namespace HealthCenterAPI.Infraestructura.Repository
 
         }
 
-        public TEntity Insert<TEntity>(TEntity entity) where TEntity : class
+        public async Task InserRangeAsync<T>(IEnumerable<T> entities) where T : class
         {
-            if (entity == null)
+            if (entities == null || !entities.Any())
             {
-                throw new ArgumentNullException(nameof(entity));
+                throw new ArgumentException("The entities collection cannot be null or empty.", nameof(entities));
             }
 
-            _context.Set<TEntity>().Add(entity);
-            _context.SaveChanges();
-
-            return entity;
-        }
-
-        public void InsertRange<TEntity>(IEnumerable<TEntity> entity) where TEntity : class
-        {
-            if (entity == null)
+            try
             {
-                throw new ArgumentNullException(nameof(entity));
-            }
+                // Iniciar transacción
+                using var transaction = await _context.Database.BeginTransactionAsync();
 
-            _context.Set<TEntity>().AddRange(entity);
-            _context.SaveChanges();
+                // Agregar las entidades al contexto
+                await _context.AddRangeAsync(entities);
+
+                // Guardar los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+                // Confirmar la transacción
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                _context.Database.RollbackTransaction();
+                Console.WriteLine($"Error during bulk insert: {ex.Message}");
+                throw;
+            }
         }
+
+
 
         private IQueryable<HealthCenter> FilterHealthCenters(IQueryable<HealthCenter> healthCenters, GenericParameters parameters)
         {

@@ -7,6 +7,6 @@ namespace HealthCenterAPI.Contracts.IRepository
     public interface IFileRepository
     {
         List<HealthCenterDto> FilterHealthCenters(List<HealthCenterDto> healthCenters, GenericParameters parameters);
-        Task<List<HealthCenterDto>> MapExcelToPagedDto(GenericParameters parameters);
+        Task<List<HealthCenterDto>> MapExcelToPagedDto(GenericParameters? parameters = null);
     }
 }

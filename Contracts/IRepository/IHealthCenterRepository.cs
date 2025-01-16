@@ -8,8 +8,7 @@ namespace HealthCenterAPI.Contracts.IRepository
     public interface IHealthCenterRepository
     {
         Task<PagedList<HealthCenterDto>> GetAllHealthCenter(GenericParameters parameters);
-        Task<HealthCenter> GetbyNameHealthCenter(string name);
-        TEntity Insert<TEntity>(TEntity entity) where TEntity : class;
-        void InsertRange<TEntity>(IEnumerable<TEntity> entity) where TEntity : class;
+        Task<List<string>> GetExistingNamesAsync(List<string> names);
+        Task InserRangeAsync<T>(IEnumerable<T> entities) where T : class;
     }
 }
