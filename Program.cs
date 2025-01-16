@@ -21,6 +21,7 @@ builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddTransient<WebScrapingRIESS>();
 builder.Services.AddTransient<IFileRepository, FileRepository>();
 builder.Services.AddTransient<IFileServices, FileServices>();
+builder.Services.AddMemoryCache();
 builder.Services.ConfigurationCords();
 
 builder.Services.AddControllers()

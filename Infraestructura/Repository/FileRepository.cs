@@ -97,6 +97,7 @@ namespace HealthCenterAPI.Infraestructura.Repository
         {
             var healthCenters = new List<HealthCenterDto>();
             var file = Directory.GetFiles(Path.Combine(Directory.GetCurrentDirectory(), "Files")).FirstOrDefault();
+
             try
             {
                 await Task.Run(() =>
@@ -104,65 +105,84 @@ namespace HealthCenterAPI.Infraestructura.Repository
                     using (var workbook = new XLWorkbook(file))
                     {
                         var worksheet = workbook.Worksheet(1); // Asumiendo que los datos están en la primera hoja
-                        var rows = worksheet.RowsUsed().Skip(1); // Saltar encabezados
+                        var rows = worksheet.RowsUsed().Skip(1).ToList(); // Saltar encabezados
+                        var totalRows = rows.Count;
+                        var batchSize = 500;
 
-                        foreach (var row in rows)
+                        // Dividir las filas en lotes de 500
+                        var batches = rows
+                            .Select((row, index) => new { row, index })
+                            .GroupBy(x => x.index / batchSize)
+                            .Select(g => g.Select(x => x.row).ToList())
+                            .ToList();
+
+                        // Procesar cada lote en paralelo
+                        Parallel.ForEach(batches, batch =>
                         {
-                            var healthCenter = new HealthCenterDto
+                            var batchResults = new List<HealthCenterDto>();
+
+                            foreach (var row in batch)
                             {
-                                NombreCentro = row.Cell("B").GetString(),
-                                Nivel_atencion = row.Cell("E").GetString(),
-                                Tipo_Centro_Primer_Nivel = row.Cell("K").GetString(),
-                                SRS = row.Cell("L").GetString(),
-                                TelCentro = row.Cell("AN").GetString(),
-                                RNC = row.Cell("AO").GetString(),
-                                Email = row.Cell("AQ").GetString(),
-                                FaxCentro = row.Cell("AP").GetString(),
-                                Anio_Apertura = row.Cell("AI").GetValue<int?>(),
-                                Anio_Ultima_Ampl_Remod = row.Cell("AJ").GetValue<int?>(),
-                                Administrada_Por = row.Cell("AK").GetString(),
-                                Complejidad_Servicio = row.Cell("I").GetValue<string>(),
-                                Location = new LocationDto
+                                var healthCenter = new HealthCenterDto
                                 {
-                                    Provincia = row.Cell("R").GetString(),
-                                    Municipio = row.Cell("T").GetString(),
-                                    Distrito_Municipal = row.Cell("U").GetString(),
-                                    Sector = row.Cell("AD").GetString(),
-                                    DireccionCentro = row.Cell("C").GetString(),
-                                    Barrio = row.Cell("W").GetString(),
-                                    Sub_Barrio = row.Cell("X").GetString(),
-                                    Gerencia_Area = row.Cell("Z").GetString(),
-                                    Zona = row.Cell("AB").GetString(),
-                                    LatCentro = row.Cell("AW").GetValue<double>(),
-                                    LonCentro = row.Cell("AX").GetValue<double>()
-                                },
-                                Services = new ServicesDto
-                                {
-                                    PNA_Consultorios = row.Cell("BB").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Modulos_Odontologia = row.Cell("BC").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Emergencia = row.Cell("BD").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Laboratorio = row.Cell("DE").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Sonografia = row.Cell("BF").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Fisioterapia = row.Cell("BG").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Internet = row.Cell("BI").GetValue<int?>() <= 0 ? false : true,
-                                    PNA_Rayox_X = row.Cell("BJ").GetValue<int?>() <= 0 ? false : true
-                                }
-                            };
+                                    NombreCentro = row.Cell("B").GetString(),
+                                    Nivel_atencion = row.Cell("E").GetString(),
+                                    Tipo_Centro_Primer_Nivel = row.Cell("K").GetString(),
+                                    SRS = row.Cell("L").GetString(),
+                                    TelCentro = row.Cell("AN").GetString(),
+                                    RNC = row.Cell("AO").GetString(),
+                                    Email = row.Cell("AQ").GetString(),
+                                    FaxCentro = row.Cell("AP").GetString(),
+                                    Anio_Apertura = row.Cell("AI").GetValue<int?>(),
+                                    Anio_Ultima_Ampl_Remod = row.Cell("AJ").GetValue<int?>(),
+                                    Administrada_Por = row.Cell("AK").GetString(),
+                                    Complejidad_Servicio = row.Cell("I").GetValue<string>(),
+                                    Location = new LocationDto
+                                    {
+                                        Provincia = row.Cell("R").GetString(),
+                                        Municipio = row.Cell("T").GetString(),
+                                        Distrito_Municipal = row.Cell("U").GetString(),
+                                        Sector = row.Cell("AD").GetString(),
+                                        DireccionCentro = row.Cell("C").GetString(),
+                                        Barrio = row.Cell("W").GetString(),
+                                        Sub_Barrio = row.Cell("X").GetString(),
+                                        Gerencia_Area = row.Cell("Z").GetString(),
+                                        Zona = row.Cell("AB").GetString(),
+                                        LatCentro = row.Cell("AW").GetValue<double>(),
+                                        LonCentro = row.Cell("AX").GetValue<double>()
+                                    },
+                                    Services = new ServicesDto
+                                    {
+                                        PNA_Consultorios = row.Cell("BB").GetValue<int?>() > 0,
+                                        PNA_Modulos_Odontologia = row.Cell("BC").GetValue<int?>() > 0,
+                                        PNA_Emergencia = row.Cell("BD").GetValue<int?>() > 0,
+                                        PNA_Laboratorio = row.Cell("DE").GetValue<int?>() > 0,
+                                        PNA_Sonografia = row.Cell("BF").GetValue<int?>() > 0,
+                                        PNA_Fisioterapia = row.Cell("BG").GetValue<int?>() > 0,
+                                        PNA_Internet = row.Cell("BI").GetValue<int?>() > 0,
+                                        PNA_Rayox_X = row.Cell("BJ").GetValue<int?>() > 0
+                                    }
+                                };
 
+                                batchResults.Add(healthCenter);
+                            }
 
-                            healthCenters.Add(healthCenter);
-                        }
+                            lock (healthCenters)
+                            {
+                                healthCenters.AddRange(batchResults);
+                            }
+                        });
                     }
                 });
             }
             catch (Exception)
             {
-
                 throw;
             }
 
             return healthCenters;
         }
+
 
 
     }
