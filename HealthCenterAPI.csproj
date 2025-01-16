@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="Hangfire" Version="1.8.17" />
     <PackageReference Include="Hangfire.Core" Version="1.8.17" />
     <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1" />
@@ -24,6 +23,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" Version="9.0.2" />
     <PackageReference Include="ScrapySharp" Version="3.0.0" />
+    <PackageReference Include="SpreadsheetLight" Version="3.5.0" />
   </ItemGroup>
 
 </Project>

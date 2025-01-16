@@ -1,8 +1,9 @@
-﻿using ClosedXML.Excel;
+﻿
 using HealthCenterAPI.Contracts.IRepository;
 using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
-using HealthCenterAPI.Shared.RequestFeatures;
+using SpreadsheetLight;
+
 
 namespace HealthCenterAPI.Infraestructura.Repository
 {
@@ -102,65 +103,55 @@ namespace HealthCenterAPI.Infraestructura.Repository
             {
                 await Task.Run(() =>
                 {
-                    using (var workbook = new XLWorkbook(file))
+                    using (var sl = new SLDocument(file))
                     {
-                        var worksheet = workbook.Worksheet(1); // Asumiendo que los datos están en la primera hoja
-                        var rows = worksheet.RowsUsed().Skip(1).ToList(); // Saltar encabezados
-                        var totalRows = rows.Count;
+                        var rows = sl.GetWorksheetStatistics().EndRowIndex; // Obtener el número total de filas
                         var batchSize = 500;
 
-                        // Dividir las filas en lotes de 500
-                        var batches = rows
-                            .Select((row, index) => new { row, index })
-                            .GroupBy(x => x.index / batchSize)
-                            .Select(g => g.Select(x => x.row).ToList())
-                            .ToList();
-
-                        // Procesar cada lote en paralelo
-                        Parallel.ForEach(batches, batch =>
+                        for (int i = 2; i <= rows; i += batchSize) // Comenzar desde la fila 2 para saltar el encabezado
                         {
                             var batchResults = new List<HealthCenterDto>();
 
-                            foreach (var row in batch)
+                            for (int j = i; j < i + batchSize && j <= rows; j++)
                             {
                                 var healthCenter = new HealthCenterDto
                                 {
-                                    NombreCentro = row.Cell("B").GetString(),
-                                    Nivel_atencion = row.Cell("E").GetString(),
-                                    Tipo_Centro_Primer_Nivel = row.Cell("K").GetString(),
-                                    SRS = row.Cell("L").GetString(),
-                                    TelCentro = row.Cell("AN").GetString(),
-                                    RNC = row.Cell("AO").GetString(),
-                                    Email = row.Cell("AQ").GetString(),
-                                    FaxCentro = row.Cell("AP").GetString(),
-                                    Anio_Apertura = row.Cell("AI").GetValue<int?>(),
-                                    Anio_Ultima_Ampl_Remod = row.Cell("AJ").GetValue<int?>(),
-                                    Administrada_Por = row.Cell("AK").GetString(),
-                                    Complejidad_Servicio = row.Cell("I").GetValue<string>(),
+                                    NombreCentro = sl.GetCellValueAsString(j, 2), // Columna B
+                                    Nivel_atencion = sl.GetCellValueAsString(j, 5), // Columna E
+                                    Tipo_Centro_Primer_Nivel = sl.GetCellValueAsString(j, 11), // Columna K
+                                    SRS = sl.GetCellValueAsString(j, 12), // Columna L
+                                    TelCentro = sl.GetCellValueAsString(j, 40), // Columna AN
+                                    RNC = sl.GetCellValueAsString(j, 41), // Columna AO
+                                    Email = sl.GetCellValueAsString(j, 43), // Columna AQ
+                                    FaxCentro = sl.GetCellValueAsString(j, 42), // Columna AP
+                                    Anio_Apertura = sl.GetCellValueAsInt32(j, 35), // Columna AI
+                                    Anio_Ultima_Ampl_Remod = sl.GetCellValueAsInt32(j, 36), // Columna AJ
+                                    Administrada_Por = sl.GetCellValueAsString(j, 37), // Columna AK
+                                    Complejidad_Servicio = sl.GetCellValueAsString(j, 9), // Columna I
                                     Location = new LocationDto
                                     {
-                                        Provincia = row.Cell("R").GetString(),
-                                        Municipio = row.Cell("T").GetString(),
-                                        Distrito_Municipal = row.Cell("U").GetString(),
-                                        Sector = row.Cell("AD").GetString(),
-                                        DireccionCentro = row.Cell("C").GetString(),
-                                        Barrio = row.Cell("W").GetString(),
-                                        Sub_Barrio = row.Cell("X").GetString(),
-                                        Gerencia_Area = row.Cell("Z").GetString(),
-                                        Zona = row.Cell("AB").GetString(),
-                                        LatCentro = row.Cell("AW").GetValue<double>(),
-                                        LonCentro = row.Cell("AX").GetValue<double>()
+                                        Provincia = sl.GetCellValueAsString(j, 18), // Columna R
+                                        Municipio = sl.GetCellValueAsString(j, 20), // Columna T
+                                        Distrito_Municipal = sl.GetCellValueAsString(j, 21), // Columna U
+                                        Sector = sl.GetCellValueAsString(j, 30), // Columna AD
+                                        DireccionCentro = sl.GetCellValueAsString(j, 3), // Columna C
+                                        Barrio = sl.GetCellValueAsString(j, 23), // Columna W
+                                        Sub_Barrio = sl.GetCellValueAsString(j, 24), // Columna X
+                                        Gerencia_Area = sl.GetCellValueAsString(j, 26), // Columna Z
+                                        Zona = sl.GetCellValueAsString(j, 28), // Columna AB
+                                        LatCentro = sl.GetCellValueAsDouble(j, 49), // Columna AW
+                                        LonCentro = sl.GetCellValueAsDouble(j, 50) // Columna AX
                                     },
                                     Services = new ServicesDto
                                     {
-                                        PNA_Consultorios = row.Cell("BB").GetValue<int?>() > 0,
-                                        PNA_Modulos_Odontologia = row.Cell("BC").GetValue<int?>() > 0,
-                                        PNA_Emergencia = row.Cell("BD").GetValue<int?>() > 0,
-                                        PNA_Laboratorio = row.Cell("DE").GetValue<int?>() > 0,
-                                        PNA_Sonografia = row.Cell("BF").GetValue<int?>() > 0,
-                                        PNA_Fisioterapia = row.Cell("BG").GetValue<int?>() > 0,
-                                        PNA_Internet = row.Cell("BI").GetValue<int?>() > 0,
-                                        PNA_Rayox_X = row.Cell("BJ").GetValue<int?>() > 0
+                                        PNA_Consultorios = sl.GetCellValueAsInt32(j, 54) > 0, // Columna BB
+                                        PNA_Modulos_Odontologia = sl.GetCellValueAsInt32(j, 55) > 0, // Columna BC
+                                        PNA_Emergencia = sl.GetCellValueAsInt32(j, 56) > 0, // Columna BD
+                                        PNA_Laboratorio = sl.GetCellValueAsInt32(j, 57) > 0, // Columna DE
+                                        PNA_Sonografia = sl.GetCellValueAsInt32(j, 58) > 0, // Columna BF
+                                        PNA_Fisioterapia = sl.GetCellValueAsInt32(j, 59) > 0, // Columna BG
+                                        PNA_Internet = sl.GetCellValueAsInt32(j, 61) > 0, // Columna BI
+                                        PNA_Rayox_X = sl.GetCellValueAsInt32(j, 62) > 0 // Columna BJ
                                     }
                                 };
 
@@ -171,13 +162,13 @@ namespace HealthCenterAPI.Infraestructura.Repository
                             {
                                 healthCenters.AddRange(batchResults);
                             }
-                        });
+                        }
                     }
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw new Exception($"Error al procesar el archivo Excel: {ex.Message}", ex);
             }
 
             return healthCenters;
