@@ -83,7 +83,7 @@ namespace HealthCenterAPI.Shared.Utils
 
         private async Task<string> DownloadAndSaveFile(string fileLink, string outputFilename)
         {
-            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "files");
+            var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
 
             if (!Directory.Exists(directoryPath))
             {
