@@ -39,6 +39,9 @@ namespace HealthCenterAPI.Domain.Entity
         [AllowNull]
         public Point? Ubication { get; set; } = null!;
 
+        [AllowNull]
+        public string? Direction { get; set; } = null!;
+
         public virtual HealthCenter? HealthCenter { get; set; } = null!;
     }
 }

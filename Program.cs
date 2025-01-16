@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using HealthCenterAPI.Contracts.IRepository;
+using HealthCenterAPI.Contracts.Iservices;
 using HealthCenterAPI.Contracts.IServices;
 using HealthCenterAPI.Domain.Services;
 using HealthCenterAPI.Extencion;
@@ -21,6 +22,9 @@ builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddTransient<WebScrapingRIESS>();
 builder.Services.AddTransient<IFileRepository, FileRepository>();
 builder.Services.AddTransient<IFileServices, FileServices>();
+builder.Services.AddTransient<IHealthCenterServices, HealthCenterServices>();
+builder.Services.AddTransient<IHealthCenterRepository, HealthCenterRepository>();
+
 builder.Services.AddMemoryCache();
 builder.Services.ConfigurationCords();
 
