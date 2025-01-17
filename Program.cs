@@ -22,10 +22,10 @@ builder.Services.ConfigureHangFire(builder.Configuration);
 builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddTransient<WebScrapingRIESS>();
-builder.Services.AddTransient<IFileRepository, FileRepository>();
-builder.Services.AddTransient<IFileServices, FileServices>();
-builder.Services.AddTransient<IHealthCenterServices, HealthCenterServices>();
-builder.Services.AddTransient<IHealthCenterRepository, HealthCenterRepository>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IFileServices, FileServices>();
+builder.Services.AddScoped<IHealthCenterServices, HealthCenterServices>();
+builder.Services.AddScoped<IHealthCenterRepository, HealthCenterRepository>();
 
 builder.Services.AddMemoryCache();
 builder.Services.ConfigurationCords();
