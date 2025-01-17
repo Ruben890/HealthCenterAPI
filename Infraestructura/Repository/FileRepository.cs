@@ -1,5 +1,4 @@
-﻿
-using HealthCenterAPI.Contracts.IRepository;
+﻿using HealthCenterAPI.Domain.Contracts.IRepository;
 using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
 using SpreadsheetLight;

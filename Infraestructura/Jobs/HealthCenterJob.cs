@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Hangfire;
-using HealthCenterAPI.Contracts;
-using HealthCenterAPI.Contracts.IRepository;
+using HealthCenterAPI.Domain.Contracts;
+using HealthCenterAPI.Domain.Contracts.IRepository;
 using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;

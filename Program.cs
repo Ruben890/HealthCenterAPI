@@ -1,14 +1,15 @@
 ﻿using Hangfire;
-using HealthCenterAPI.Contracts.IRepository;
-using HealthCenterAPI.Contracts.Iservices;
-using HealthCenterAPI.Contracts.IServices;
-using HealthCenterAPI.Domain.Services;
+using HealthCenterAPI.Application.Services;
+using HealthCenterAPI.Domain.Contracts.IRepository;
+using HealthCenterAPI.Domain.Contracts.IServices;
 using HealthCenterAPI.Extencion;
 using HealthCenterAPI.Infraestructura.Repository;
-using HealthCenterAPI.Mapping;
+using HealthCenterAPI.Presentation.Mapping;
 using HealthCenterAPI.Shared.Utils;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json.Serialization;
+using Scalar.AspNetCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -67,9 +68,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 // Activar el dashboard de Hangfire solo en entorno de desarrollo
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.UseHangfireDashboard();
 }
-
+app.MapScalarApiReference();
 app.UseCors("AllowAll");
 app.UseRouting();
 app.MapControllers();

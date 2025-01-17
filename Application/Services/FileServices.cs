@@ -1,6 +1,6 @@
-﻿using HealthCenterAPI.Contracts.IRepository;
-using HealthCenterAPI.Contracts.Iservices;
-using HealthCenterAPI.Contracts.IServices;
+﻿using HealthCenterAPI.Contracts.Iservices;
+using HealthCenterAPI.Domain.Contracts.IRepository;
+using HealthCenterAPI.Domain.Contracts.IServices;
 using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Shared;
 using HealthCenterAPI.Shared.Dto;
@@ -13,7 +13,7 @@ using System.Runtime.Caching;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace HealthCenterAPI.Domain.Services
+namespace HealthCenterAPI.Application.Services
 {
     public class FileServices : IFileServices
     {
@@ -48,7 +48,7 @@ namespace HealthCenterAPI.Domain.Services
                     // Filtrar y paginar los centros de salud
                     var filteredHealthCenters = _fileRepository.FilterHealthCenters(healthCenterList, parameters);
                     healthCenter = PagedList<HealthCenterDto>.ToPagedList(filteredHealthCenters, parameters.PageNumber, parameters.PageSize);
-                   
+
                     // Configurar las opciones de caché y almacenar los datos
                     _cache.Set(cacheKey, healthCenter, new MemoryCacheEntryOptions
                     {

@@ -1,10 +1,10 @@
-﻿using HealthCenterAPI.Contracts.IRepository;
-using HealthCenterAPI.Contracts.Iservices;
-using HealthCenterAPI.Domain.Entity;
+﻿using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Shared.QueryParameters;
 using HealthCenterAPI.Shared;
+using HealthCenterAPI.Domain.Contracts.IRepository;
+using HealthCenterAPI.Domain.Contracts.IServices;
 
-namespace HealthCenterAPI.Domain.Services
+namespace HealthCenterAPI.Application.Services
 {
     public class HealthCenterServices : IHealthCenterServices
     {

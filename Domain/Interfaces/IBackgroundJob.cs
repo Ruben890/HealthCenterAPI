@@ -1,4 +1,4 @@
-﻿namespace HealthCenterAPI.Contracts
+﻿namespace HealthCenterAPI.Domain.Contracts
 {
     public interface IBackgroundJob
     {

@@ -1,4 +1,4 @@
-﻿using HealthCenterAPI.Contracts.IRepository;
+﻿using HealthCenterAPI.Domain.Contracts.IRepository;
 using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Repository;
 using HealthCenterAPI.Shared.Dto;

@@ -2,7 +2,7 @@
 using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Shared.Dto;
 
-namespace HealthCenterAPI.Mapping
+namespace HealthCenterAPI.Presentation.Mapping
 {
     public class HealthCenterProfile : MappingProfile
     {

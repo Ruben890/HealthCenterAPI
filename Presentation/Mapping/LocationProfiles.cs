@@ -3,7 +3,7 @@ using HealthCenterAPI.Domain.Entity;
 using HealthCenterAPI.Shared.Dto;
 using NetTopologySuite.Geometries;
 
-namespace HealthCenterAPI.Mapping
+namespace HealthCenterAPI.Presentation.Mapping
 {
     public class LocationProfiles : MappingProfile
     {
@@ -30,8 +30,8 @@ namespace HealthCenterAPI.Mapping
                 .ForMember(dest => dest.Barrio, opt => opt.MapFrom(src => src.Neighborhood))
                 .ForMember(dest => dest.Gerencia_Area, opt => opt.MapFrom(src => src.Area))
                 .ForMember(dest => dest.Zona, opt => opt.MapFrom(src => src.Zone))
-                .ForMember(dest => dest.LatCentro, opt => opt.MapFrom(src => src.Ubication != null ? src.Ubication.Y : default(double)))
-                .ForMember(dest => dest.LonCentro, opt => opt.MapFrom(src => src.Ubication != null ? src.Ubication.X : default(double)));
+                .ForMember(dest => dest.LatCentro, opt => opt.MapFrom(src => src.Ubication != null ? src.Ubication.Y : default))
+                .ForMember(dest => dest.LonCentro, opt => opt.MapFrom(src => src.Ubication != null ? src.Ubication.X : default));
         }
     }
 }

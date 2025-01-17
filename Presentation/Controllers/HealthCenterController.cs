@@ -1,10 +1,9 @@
-﻿using HealthCenterAPI.Contracts.Iservices;
-using HealthCenterAPI.Contracts.IServices;
+﻿using HealthCenterAPI.Domain.Contracts.IServices;
 using HealthCenterAPI.Shared;
 using HealthCenterAPI.Shared.QueryParameters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HealthCenterAPI.Controllers
+namespace HealthCenterAPI.Presentation.Controllers
 {
     [Route("api/HealthCenter")]
     [ApiController]
@@ -32,7 +31,7 @@ namespace HealthCenterAPI.Controllers
             var response = new BaseResponse();
             try
             {
-                if(_configuration.GetValue<bool>("DataSourceType:Database", false) && parameters.SourceType == DataSourceType.Database)
+                if (_configuration.GetValue("DataSourceType:Database", false) && parameters.SourceType == DataSourceType.Database)
                 {
                     return Ok(await _healthCenterServices.GetHealthCenter(parameters));
                 }
@@ -40,7 +39,7 @@ namespace HealthCenterAPI.Controllers
                 {
                     return Ok(await _fileService.GetHealthCenter(parameters));
                 }
-               
+
             }
             catch (Exception ex)
             {

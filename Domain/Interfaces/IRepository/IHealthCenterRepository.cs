@@ -3,7 +3,7 @@ using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
 using HealthCenterAPI.Shared.RequestFeatures;
 
-namespace HealthCenterAPI.Contracts.IRepository
+namespace HealthCenterAPI.Domain.Contracts.IRepository
 {
     public interface IHealthCenterRepository
     {
