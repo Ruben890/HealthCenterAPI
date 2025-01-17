@@ -1,7 +1,7 @@
 # Documentación de la API de HealthCenter
 
 ## Descripción General
-La **API de HealthCenter** automatiza el proceso de descarga y procesamiento de datos de centros de salud desde el SNS (Sistema Nacional de Salud). Realiza web scraping al SNS para obtener la información de forma automatizada y rápida. Proporciona una respuesta JSON estructurada con detalles completos sobre los centros de salud y admite filtrado y configuración de la fuente de datos. Además, la API está configurada para actualizarse automáticamente a la última versión disponible utilizando un job programado diario.
+La **API de HealthCenter** automatiza la descarga y procesamiento de datos de centros de salud provenientes del SNS (Sistema Nacional de Salud). Utiliza web scraping para acceder a la información del SNS de manera rápida y eficiente. La API devuelve una respuesta JSON estructurada con detalles completos sobre los centros de salud y ofrece opciones de filtrado y personalización de la fuente de datos. Además, está configurada para actualizarse automáticamente a la última versión disponible mediante un proceso programado diario, que solo descarga una nueva versión si la fecha de la versión del SNS coincide con la fecha actual. Si la fecha de la versión es anterior o diferente, no se descarga el archivo.
 
 ---
 
