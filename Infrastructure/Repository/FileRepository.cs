@@ -4,7 +4,7 @@ using HealthCenterAPI.Shared.QueryParameters;
 using SpreadsheetLight;
 
 
-namespace HealthCenterAPI.Infraestructura.Repository
+namespace HealthCenterAPI.Infrastructure.Repository
 {
     public class FileRepository : IFileRepository
     {

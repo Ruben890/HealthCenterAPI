@@ -1,6 +1,6 @@
 ﻿using Hangfire;
 using HealthCenterAPI.Domain.Contracts;
-using HealthCenterAPI.Infraestructura.Jobs;
+using HealthCenterAPI.Infrastructure.Jobs;
 
 namespace HealthCenterAPI.Extencion
 {

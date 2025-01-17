@@ -7,7 +7,7 @@ using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
 using HealthCenterAPI.Shared.Utils;
 
-namespace HealthCenterAPI.Infraestructura.Jobs
+namespace HealthCenterAPI.Infrastructure.Jobs
 {
     public class HealthCenterJob : IBackgroundJob
     {

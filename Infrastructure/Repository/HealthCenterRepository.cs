@@ -6,7 +6,7 @@ using HealthCenterAPI.Shared.QueryParameters;
 using HealthCenterAPI.Shared.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
 
-namespace HealthCenterAPI.Infraestructura.Repository
+namespace HealthCenterAPI.Infrastructure.Repository
 {
     public class HealthCenterRepository : IHealthCenterRepository
     {

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HealthCenterAPI.Infraestructura.Configuration
+namespace HealthCenterAPI.Infrastructure.Configuration
 {
     public class HealthCenterConfiguration : IEntityTypeConfiguration<HealthCenter>
     {
