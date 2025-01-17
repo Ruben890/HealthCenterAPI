@@ -69,17 +69,18 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Configurar Scalar para la interfaz de usuario
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("HealthCenterAPI")
+               .WithDownloadButton(false)
+               .WithTheme(ScalarTheme.Purple)
+               .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
+    });
+
     app.UseHangfireDashboard();
 }
-
-// Configurar Scalar para la interfaz de usuario
-app.MapScalarApiReference(options =>
-{
-    options.WithTitle("HealthCenterAPI")
-           .WithDownloadButton(false)
-           .WithTheme(ScalarTheme.Purple)
-           .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
-});
 app.UseCors("CorsPolicy");
 app.UseRouting();
 app.MapControllers();
