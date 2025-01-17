@@ -11,20 +11,20 @@ namespace HealthCenterAPI.Infraestructura.Jobs
 {
     public class HealthCenterJob : IBackgroundJob
     {
-        private readonly WebScrapingRIESS _webScrapingRIESS;
+        private readonly WebScrapingSNS _webScrapingSNS;
         private readonly IFileRepository _fileRepository;
         private readonly IHealthCenterRepository _healthCenterRepository;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
 
         public HealthCenterJob
-            (WebScrapingRIESS webScrapingRIESS,
+            (WebScrapingSNS webScrapingSNS,
             IFileRepository fileRepository,
             IConfiguration configuration,
             IHealthCenterRepository healthCenterRepository,
             IMapper mapper)
         {
-            _webScrapingRIESS = webScrapingRIESS;
+            _webScrapingSNS = webScrapingSNS;
             _fileRepository = fileRepository;
             _config = configuration;
             _mapper = mapper;
@@ -37,7 +37,7 @@ namespace HealthCenterAPI.Infraestructura.Jobs
 
             var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
             if (!Directory.Exists(directoryPath) || Directory.GetFiles(directoryPath).Length <= 0) date = null;
-            await _webScrapingRIESS.DownloadExcelFile(date);
+            await _webScrapingSNS.DownloadExcelFile(date);
         }
 
         public async Task MapExcelDataToDatabaseAsync()

@@ -16,13 +16,13 @@ namespace HealthCenterAPI.Application.Services
 {
     public class FileServices : IFileServices
     {
-        private readonly WebScrapingRIESS _webScrapingRIESS;
+        private readonly WebScrapingSNS _webScrapingSNS;
         private readonly IMemoryCache _cache;
         private IFileRepository _fileRepository;
-        public FileServices(IMemoryCache cache, WebScrapingRIESS webScrapingRIESS, IFileRepository fileRepository)
+        public FileServices(IMemoryCache cache, WebScrapingSNS webScrapingSNS, IFileRepository fileRepository)
         {
             _cache = cache;
-            _webScrapingRIESS = webScrapingRIESS;
+            _webScrapingSNS = webScrapingSNS;
             _fileRepository = fileRepository;
         }
 
@@ -81,7 +81,7 @@ namespace HealthCenterAPI.Application.Services
 
             var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Files");
             if (!Directory.Exists(directoryPath) || Directory.GetFiles(directoryPath).Length <= 0) date = null;
-            await _webScrapingRIESS.DownloadExcelFile(date);
+            await _webScrapingSNS.DownloadExcelFile(date);
         }
 
     }

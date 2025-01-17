@@ -10,12 +10,12 @@ using System.Text.RegularExpressions;
 
 namespace HealthCenterAPI.Shared.Utils
 {
-    public class WebScrapingRIESS
+    public class WebScrapingSNS
     {
         private readonly WebPage _page;
         private readonly IConfiguration _configuration;
 
-        public WebScrapingRIESS(IConfiguration configuration)
+        public WebScrapingSNS(IConfiguration configuration)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 

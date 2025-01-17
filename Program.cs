@@ -22,7 +22,7 @@ builder.Services.ConfigureIISIntegration();
 builder.Services.ConfigureHangFire(builder.Configuration);
 builder.Services.ConfigureBackgroundJobs();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddTransient<WebScrapingRIESS>();
+builder.Services.AddTransient<WebScrapingSNS>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IHealthCenterServices, HealthCenterServices>();
