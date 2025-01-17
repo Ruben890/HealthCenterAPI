@@ -17,11 +17,15 @@ La **API de HealthCenter** automatiza el proceso de descarga y procesamiento de 
   - Filtros basados en servicios (por ejemplo, Internet, Emergencias).
 - **Fuente de Datos Configurable:**
   - Opciones de configuración para alternar entre fuentes de datos basadas en archivos o bases de datos.
+- **Paginación Integrada:**
+  - Respuestas paginadas configurables con los parámetros `pageNumber` y `pageSize`.
 
 ---
 
 ## Formato de Respuesta JSON
+### Respuesta Estándar
 La API devuelve datos con la siguiente estructura:
+
 ```json
 {
     "Name": "CENTRO DE PRIMER NIVEL DE ATENCION LOS PERALEJOS",
@@ -63,6 +67,61 @@ La API devuelve datos con la siguiente estructura:
 ```
 
 ---
+
+### Respuesta Paginada
+Cuando se utiliza la paginación, la estructura incluye un objeto adicional `Pagination` que contiene información sobre el estado actual de la paginación:
+
+```json
+{
+    "Details": [
+        {
+            "Name": "CENTRO DE PRIMER NIVEL DE ATENCION LOS PERALEJOS",
+            "Level": "PRIMER NIVEL",
+            "TypeCenter": "CENTRO DE PRIMER NIVEL",
+            "SRS": "METROPOLITANA",
+            "Tel": "809-561-5749",
+            ...
+        }
+    ],
+    "Pagination": {
+        "TotalCount": 1866,
+        "PageSize": 20,
+        "CurrentPage": 1,
+        "TotalPages": 94,
+        "NextPage": 2
+    }
+}
+```
+
+---
+
+## Configuración de Paginación
+La paginación permite controlar cuántos elementos se devuelven por solicitud y en qué página se encuentran. Para ello, se utilizan los parámetros:
+- **`pageNumber`**: Define el número de página a recuperar. (Por defecto: `1`).
+- **`pageSize`**: Define el número de elementos por página. (Por defecto: `20`).
+
+### Ejemplo de Solicitud con Paginación
+**Endpoint:**
+```
+GET /api/HealthCenter/GetAllHealthCenter?pageNumber=2&pageSize=20
+```
+
+**Respuesta:**
+```json
+{
+    "Details": [...],
+    "Pagination": {
+        "TotalCount": 1866,
+        "PageSize": 20,
+        "CurrentPage": 2,
+        "TotalPages": 94,
+        "NextPage": 3
+    }
+}
+```
+
+---
+
 
 ## Configuración
 ### Selección de Fuente de Datos
@@ -106,4 +165,3 @@ Define las fuentes de datos disponibles:
 - **Database:** Base de datos relacional.
 
 ---
-
