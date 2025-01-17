@@ -29,7 +29,7 @@ builder.Services.AddScoped<IHealthCenterRepository, HealthCenterRepository>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
-builder.Services.ConfigurationCords();
+builder.Services.ConfigurationCords(builder.Configuration);
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
@@ -76,11 +76,11 @@ if (app.Environment.IsDevelopment())
 app.MapScalarApiReference(options =>
 {
     options.WithTitle("HealthCenterAPI")
-           .WithDownloadButton(true)
+           .WithDownloadButton(false)
            .WithTheme(ScalarTheme.Purple)
            .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
 });
-app.UseCors("AllowAll");
+app.UseCors("CorsPolicy");
 app.UseRouting();
 app.MapControllers();
 app.Run();

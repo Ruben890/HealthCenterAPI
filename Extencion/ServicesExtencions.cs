@@ -3,6 +3,7 @@ using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
 using HealthCenterAPI.Repository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace HealthCenterAPI.Extencion
 {
@@ -22,18 +23,29 @@ namespace HealthCenterAPI.Extencion
             );
         }
 
-        public static void ConfigurationCords(this IServiceCollection services)
+        public static void ConfigurationCords(this IServiceCollection services,IConfiguration config)
         {
+
+            // Leer la lista de orígenes permitidos desde la configuración
+            var allowedOrigins = config.GetSection("AllowedOrigins").Get<string[]>() ?? ["*"];
+
+            if (allowedOrigins is null || allowedOrigins.Length == 0)
+            {
+                throw new InvalidOperationException("No allowed origins have been defined in the settings. Make sure to add the 'AllowedOrigins' section in appsettings.");
+            }
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAll", policy =>
+                options.AddPolicy("CorsPolicy", builder =>
                 {
-                    policy.AllowAnyOrigin()
-                    .WithMethods("GET")
-                    .WithHeaders();
-                });
+                    builder.WithOrigins(allowedOrigins)
+                           .AllowAnyHeader() // Permitir todos los encabezados
+                           .WithMethods("GET")
+                           .AllowCredentials() // Habilitar credenciales
+                           .WithExposedHeaders("X-Custom-Header") // Exponer solo los encabezados necesarios
+                           .SetPreflightMaxAge(TimeSpan.FromMinutes(10)); // Cacheo de preflight (OPTIONS)
 
+                });
             });
         }
 
