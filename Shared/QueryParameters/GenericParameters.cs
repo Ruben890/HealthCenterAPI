@@ -1,5 +1,8 @@
-﻿using HealthCenterAPI.Shared.RequestFeatures;
+﻿using DocumentFormat.OpenXml.Presentation;
+using HealthCenterAPI.Shared.RequestFeatures;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace HealthCenterAPI.Shared.QueryParameters
 {
@@ -8,8 +11,10 @@ namespace HealthCenterAPI.Shared.QueryParameters
 
         /// <summary>
         /// Especifica el origen de los datos para el procesamiento.
-        /// Puede ser un archivo Excel o una base de datos.
+        /// Puede ser un archivo(File) o una base de datos(Database).
         /// </summary>
+        [DefaultValue(DataSourceType.File)]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public DataSourceType? SourceType { get; set; } = DataSourceType.File;
         public string? Province { get; set; } = null;
         public string? Municipality { get; set; } = null;
@@ -28,9 +33,19 @@ namespace HealthCenterAPI.Shared.QueryParameters
 
     }
 
+    /// <summary>
+    /// Tipos de origen de datos.
+    /// </summary>
     public enum DataSourceType
     {
-        Database,
-        File
+        /// <summary>
+        /// "Archivo local o en la nube"
+        /// </summary>
+        File,
+
+        /// <summary>
+        /// Base de datos relacional
+        /// </summary>
+        Database
     }
 }
