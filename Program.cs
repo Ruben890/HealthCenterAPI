@@ -28,6 +28,7 @@ builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<IHealthCenterServices, HealthCenterServices>();
 builder.Services.AddScoped<IHealthCenterRepository, HealthCenterRepository>();
 
+builder.Services.AddOpenApi();
 builder.Services.AddMemoryCache();
 builder.Services.ConfigurationCords();
 
@@ -71,7 +72,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.UseHangfireDashboard();
 }
-app.MapScalarApiReference();
+
+// Configurar Scalar para la interfaz de usuario
+app.MapScalarApiReference(options =>
+{
+    options.WithTitle("HealthCenterAPI")
+           .WithDownloadButton(true)
+           .WithTheme(ScalarTheme.Purple)
+           .WithDefaultHttpClient(ScalarTarget.JavaScript, ScalarClient.Axios);
+});
 app.UseCors("AllowAll");
 app.UseRouting();
 app.MapControllers();
