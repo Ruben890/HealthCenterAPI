@@ -38,8 +38,6 @@ namespace HealthCenterAPI.Infrastructure.Repository
             }
         }
 
-
-
         public async Task<PagedList<HealthCenterDto>> GetAllHealthCenter(GenericParameters parameters)
         {
             ;
@@ -124,8 +122,6 @@ namespace HealthCenterAPI.Infrastructure.Repository
             }
         }
 
-
-
         private IQueryable<HealthCenter> FilterHealthCenters(IQueryable<HealthCenter> healthCenters, GenericParameters parameters)
         {
             var query = healthCenters;
@@ -133,37 +129,37 @@ namespace HealthCenterAPI.Infrastructure.Repository
             // Filtrar por provincia
             if (!string.IsNullOrEmpty(parameters.Province))
             {
-                query = query.Where(hc => hc.Location!.Province!.Contains(parameters.Province, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Province!, $"%{parameters.Province}%"));
             }
 
             // Filtrar por municipio
             if (!string.IsNullOrEmpty(parameters.Municipality))
             {
-                query = query.Where(hc => hc.Location!.Municipality!.Contains(parameters.Municipality, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Municipality!, $"%{parameters.Municipality}%"));
             }
 
             // Filtrar por sector
             if (!string.IsNullOrEmpty(parameters.Sector))
             {
-                query = query.Where(hc => hc.Location!.Sector!.Contains(parameters.Sector, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Sector!, $"%{parameters.Sector}%"));
             }
 
             // Filtrar por nivel de atención
             if (!string.IsNullOrEmpty(parameters.Level))
             {
-                query = query.Where(hc => hc.Level!.Contains(parameters.Level, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Level!, $"%{parameters.Level}%"));
             }
 
             // Filtrar por tipo de centro
             if (!string.IsNullOrEmpty(parameters.TypeCenter))
             {
-                query = query.Where(hc => hc.TypeCenter!.Contains(parameters.TypeCenter, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.TypeCenter!, $"%{parameters.TypeCenter}%"));
             }
 
             // Filtrar por área
             if (!string.IsNullOrEmpty(parameters.Area))
             {
-                query = query.Where(hc => hc.Location!.Area!.Contains(parameters.Area, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Area!, $"%{parameters.Area}%"));
             }
 
             // Filtrar por servicios disponibles
@@ -210,5 +206,6 @@ namespace HealthCenterAPI.Infrastructure.Repository
             // Devolver los resultados filtrados
             return query;
         }
+
     }
 }

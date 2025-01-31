@@ -1,6 +1,7 @@
 ﻿using HealthCenterAPI.Domain.Contracts.IRepository;
 using HealthCenterAPI.Shared.Dto;
 using HealthCenterAPI.Shared.QueryParameters;
+using Microsoft.EntityFrameworkCore;
 using SpreadsheetLight;
 
 
@@ -15,37 +16,37 @@ namespace HealthCenterAPI.Infrastructure.Repository
             // Filtrar por provincia
             if (!string.IsNullOrEmpty(parameters.Province))
             {
-                query = query.Where(hc => hc.Location!.Provincia!.Contains(parameters.Province, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Provincia!, $"%{parameters.Province}%"));
             }
 
             // Filtrar por municipio
             if (!string.IsNullOrEmpty(parameters.Municipality))
             {
-                query = query.Where(hc => hc.Location!.Municipio!.Contains(parameters.Municipality, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Municipio!, $"%{parameters.Municipality}%"));
             }
 
             // Filtrar por sector
             if (!string.IsNullOrEmpty(parameters.Sector))
             {
-                query = query.Where(hc => hc.Location!.Sector!.Contains(parameters.Sector, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Sector!, $"%{parameters.Sector}%"));
             }
 
             // Filtrar por nivel de atención
             if (!string.IsNullOrEmpty(parameters.Level))
             {
-                query = query.Where(hc => hc.Nivel_atencion!.Contains(parameters.Level, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Nivel_atencion!, $"%{parameters.Level}%"));
             }
 
             // Filtrar por tipo de centro
             if (!string.IsNullOrEmpty(parameters.TypeCenter))
             {
-                query = query.Where(hc => hc.Tipo_Centro_Primer_Nivel!.Contains(parameters.TypeCenter, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Tipo_Centro_Primer_Nivel!, $"%{parameters.TypeCenter}%"));
             }
 
             // Filtrar por área
             if (!string.IsNullOrEmpty(parameters.Area))
             {
-                query = query.Where(hc => hc.Location!.Zona!.Contains(parameters.Area, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(hc => EF.Functions.Like(hc.Location!.Zona!, $"%{parameters.Area}%"));
             }
 
             // Filtrar por servicios disponibles
